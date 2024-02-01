@@ -1,5 +1,6 @@
 package com.booktracker.booktrackerbackend;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,39 +9,33 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
+
     @Autowired
-    private BookService bookService;
+    private BookRepository bookRepository;
 
     @GetMapping
     public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
-    }
-
-    @GetMapping("/{id}")
-    public Book getBookById(@PathVariable Long id) {
-        return bookService.getBookById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+        return bookRepository.findAll();
     }
 
     @PostMapping
     public Book addBook(@RequestBody Book book) {
-        return bookService.saveBook(book);
+        return bookRepository.save(book);
+    }
+
+    @GetMapping("/{id}")
+    public Book getBookById(@PathVariable String id) {
+        return bookRepository.findById(id).orElse(null);
     }
 
     @PutMapping("/{id}")
-    public Book updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
-        Book book = bookService.getBookById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
-
-        book.setTitle(bookDetails.getTitle());
-        book.setAuthor(bookDetails.getAuthor());
-
-        return bookService.saveBook(book);
+    public Book updateBook(@PathVariable String id, @RequestBody Book updatedBook) {
+        updatedBook.setId(id);
+        return bookRepository.save(updatedBook);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable Long id) {
-        bookService.deleteBook(id);
-
+    public void deleteBook(@PathVariable String id) {
+        bookRepository.deleteById(id);
     }
 }

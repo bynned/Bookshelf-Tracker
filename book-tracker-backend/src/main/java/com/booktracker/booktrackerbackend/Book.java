@@ -1,26 +1,28 @@
 package com.booktracker.booktrackerbackend;
 
-import jakarta.persistence.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "books")
+import java.util.UUID;
+
+@Document(collection = "books")
 public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    private String id;
 
-    @Column(name = "title")
     private String title;
-
-    @Column(name = "author")
     private String author;
 
+    public Book() {
+        this.id = UUID.randomUUID().toString(); // Generate random uuid for each book
+    }
+
     // Getters and setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
     public String getTitle() {
@@ -33,6 +35,6 @@ public class Book {
         return author;
     }
     public void setAuthor(String author) {
-        this.author = this.author;
+        this.author = author;
     }
 }
